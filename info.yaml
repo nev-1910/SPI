@@ -8,12 +8,12 @@ project:
   language: "Verilog"
   clock_hz: 0
 
-tiles: "1x1"
+  tiles: "1x1"
 
-top_module: "tt_um_spi_master"
+  top_module: "tt_um_spi_master"
 
-source_files:
-  - "project.v"
+  source_files:
+    - "project.v"
 
 pinout:
 
