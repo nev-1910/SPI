@@ -4,7 +4,7 @@ project:
   title: "SPI Master Controller"
   author: "Nevin Philip"
   discord: ""
-  description: "8-bit SPI Master Controller using FSM and Shift Register"
+  description: "8-bit Full Duplex SPI Master Controller using FSM and Shift Registers"
   language: "Verilog"
   clock_hz: 0
 
@@ -32,14 +32,14 @@ pinout:
   uo[1]: "SCLK"
   uo[2]: "CS"
   uo[3]: "BUSY"
-  uo[4]: ""
-  uo[5]: ""
-  uo[6]: ""
-  uo[7]: ""
+  uo[4]: "RX Data Bit 0"
+  uo[5]: "RX Data Bit 1"
+  uo[6]: "RX Data Bit 2"
+  uo[7]: "RX Data Bit 3"
 
   # Bidirectional pins
   uio[0]: "START"
-  uio[1]: ""
+  uio[1]: "MISO"
   uio[2]: ""
   uio[3]: ""
   uio[4]: ""
