@@ -10,7 +10,7 @@ project:
 
   tiles: "1x1"
 
-  top_module: "tt_um_spi_master_slave"
+  top_module: "tt_um_spi_master"
 
   source_files:
     - "project.v"
