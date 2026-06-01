@@ -5,7 +5,7 @@ TOPLEVEL_LANG ?= verilog
 
 SRC_DIR = $(PWD)/../src
 
-PROJECT_SOURCES = project.v
+PROJECT_SOURCES = project.v spi_master.v spi_slave.v
 
 ifeq ($(GATES),yes)
 
