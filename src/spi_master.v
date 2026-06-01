@@ -18,6 +18,7 @@ module spi_master(
 
 reg [7:0] tx_shift;
 reg [7:0] rx_shift;
+
 reg [2:0] bit_count;
 
 localparam IDLE     = 2'b00;
@@ -62,16 +63,13 @@ begin
 
                 if(start)
                 begin
-
                     tx_shift <= tx_data;
                     rx_shift <= 8'b0;
-
                     bit_count <= 3'b0;
 
                     cs <= 1'b0;
 
                     state <= TRANSFER;
-
                 end
 
             end
@@ -92,18 +90,13 @@ begin
 
                     if(bit_count == 3'd7)
                     begin
-
                         rx_data <= {rx_shift[6:0], miso};
-
                         state <= DONE;
-
                     end
 
                     else
                     begin
-
                         bit_count <= bit_count + 1'b1;
-
                     end
 
                 end
@@ -122,10 +115,18 @@ begin
 
             end
 
+            default:
+            begin
+                state <= IDLE;
+            end
+
         endcase
 
     end
 
 end
+
+wire _unused_master_rxshift;
+assign _unused_master_rxshift = rx_shift[7];
 
 endmodule
