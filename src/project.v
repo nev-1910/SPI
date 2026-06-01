@@ -28,6 +28,8 @@ module tt_um_spi_master_slave (
 
     wire [7:0] master_rx;
     wire [7:0] slave_rx;
+    wire _unused_master = &master_rx[7:1];
+    wire _unused_slave  = &slave_rx[7:1];
 
     //--------------------------------------------------
     // Master
