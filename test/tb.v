@@ -13,7 +13,7 @@ module tb;
     reg clk;
     reg rst_n;
 
-    tt_um_spi_master dut (
+    tt_um_spi_master_slave dut (
         .ui_in(ui_in),
         .uo_out(uo_out),
         .uio_in(uio_in),
