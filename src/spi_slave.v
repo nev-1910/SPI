@@ -15,23 +15,25 @@ module spi_slave(
 
 reg [7:0] tx_shift;
 reg [7:0] rx_shift;
-
 reg [2:0] bit_count;
 
-always @(negedge cs)
+always @(posedge sclk or posedge cs)
 begin
 
-    tx_shift <= tx_data;
-    rx_shift <= 8'b0;
+    if(cs)
+    begin
 
-    bit_count <= 3'b0;
+        tx_shift <= tx_data;
+        rx_shift <= 8'b0;
 
-end
+        bit_count <= 3'b0;
 
-always @(posedge sclk)
-begin
+        miso <= 1'b0;
+        rx_data <= 8'b0;
 
-    if(!cs)
+    end
+
+    else
     begin
 
         miso <= tx_shift[7];
@@ -42,18 +44,20 @@ begin
 
         if(bit_count == 3'd7)
         begin
+
             rx_data <= {rx_shift[6:0], mosi};
+
         end
+
         else
         begin
+
             bit_count <= bit_count + 1'b1;
+
         end
 
     end
 
 end
-
-wire _unused_slave_rxshift;
-assign _unused_slave_rxshift = rx_shift[7];
 
 endmodule
