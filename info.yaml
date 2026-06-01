@@ -1,3 +1,5 @@
+# Tiny Tapeout project information
+
 project:
   title: "SPI Master Slave Communication"
   author: "Nevin Philip"
@@ -17,6 +19,7 @@ project:
 
 pinout:
 
+  # Inputs
   ui[0]: "START"
   ui[1]: ""
   ui[2]: ""
@@ -26,15 +29,17 @@ pinout:
   ui[6]: ""
   ui[7]: ""
 
+  # Outputs
   uo[0]: "MOSI"
   uo[1]: "MISO"
   uo[2]: "SCLK"
   uo[3]: "CS"
   uo[4]: "DONE"
-  uo[5]: ""
-  uo[6]: ""
+  uo[5]: "MASTER_RX0"
+  uo[6]: "SLAVE_RX0"
   uo[7]: ""
 
+  # Bidirectional pins
   uio[0]: ""
   uio[1]: ""
   uio[2]: ""
