@@ -1,6 +1,7 @@
 `default_nettype none
 
-module tt_um_spi_master (
+module tt_um_spi_master_slave (
+
     input  wire [7:0] ui_in,
     output wire [7:0] uo_out,
 
@@ -11,132 +12,92 @@ module tt_um_spi_master (
     input  wire ena,
     input  wire clk,
     input  wire rst_n
+
 );
 
-    localparam IDLE     = 2'b00;
-    localparam LOAD     = 2'b01;
-    localparam TRANSFER = 2'b10;
-    localparam DONE     = 2'b11;
+    //--------------------------------------------------
+    // SPI Signals
+    //--------------------------------------------------
 
-    reg [1:0] state;
-
-    reg [7:0] tx_shift_reg;
-    reg [7:0] rx_shift_reg;
-    reg [7:0] received_data;
-
-    reg [2:0] bit_count;
-
-    reg mosi_reg;
-    reg sclk_reg;
-    reg cs_reg;
-    reg busy_reg;
-
+    wire mosi;
     wire miso;
+    wire sclk;
+    wire cs;
 
-    assign miso = uio_in[1];
+    wire done;
 
-    always @(posedge clk or negedge rst_n) begin
+    wire [7:0] master_rx;
+    wire [7:0] slave_rx;
 
-        if (!rst_n) begin
+    //--------------------------------------------------
+    // Master
+    //--------------------------------------------------
 
-            state <= IDLE;
+    spi_master MASTER (
 
-            tx_shift_reg <= 8'b0;
-            rx_shift_reg <= 8'b0;
-            received_data <= 8'b0;
+        .clk(clk),
+        .rst_n(rst_n),
 
-            bit_count <= 3'b0;
+        .start(ui_in[0]),
 
-            mosi_reg <= 1'b0;
-            sclk_reg <= 1'b0;
-            cs_reg <= 1'b1;
-            busy_reg <= 1'b0;
+        .tx_data(8'hB3),
 
-        end
-        else begin
+        .miso(miso),
 
-            case(state)
+        .mosi(mosi),
+        .sclk(sclk),
+        .cs(cs),
 
-                IDLE: begin
+        .rx_data(master_rx),
+        .done(done)
 
-                    cs_reg <= 1'b1;
-                    busy_reg <= 1'b0;
-                    sclk_reg <= 1'b0;
+    );
 
-                    if(uio_in[0])
-                        state <= LOAD;
+    //--------------------------------------------------
+    // Slave
+    //--------------------------------------------------
 
-                end
+    spi_slave SLAVE (
 
-                LOAD: begin
+        .sclk(sclk),
+        .cs(cs),
 
-                    tx_shift_reg <= ui_in;
-                    rx_shift_reg <= 8'b0;
+        .mosi(mosi),
 
-                    bit_count <= 3'b0;
+        .tx_data(8'hCC),
 
-                    cs_reg <= 1'b0;
-                    busy_reg <= 1'b1;
+        .miso(miso),
 
-                    state <= TRANSFER;
+        .rx_data(slave_rx)
 
-                end
+    );
 
-                TRANSFER: begin
+    //--------------------------------------------------
+    // Output Mapping
+    //--------------------------------------------------
 
-                    sclk_reg <= ~sclk_reg;
+    assign uo_out[0] = mosi;
+    assign uo_out[1] = miso;
+    assign uo_out[2] = sclk;
+    assign uo_out[3] = cs;
+    assign uo_out[4] = done;
 
-                    if(sclk_reg == 1'b0) begin
+    assign uo_out[5] = master_rx[0];
+    assign uo_out[6] = slave_rx[0];
+    assign uo_out[7] = 1'b0;
 
-                        mosi_reg <= tx_shift_reg[7];
-
-                        tx_shift_reg <= tx_shift_reg << 1;
-
-                        rx_shift_reg <= {rx_shift_reg[6:0], miso};
-
-                        if(bit_count == 3'd7) begin
-
-                            received_data <= {rx_shift_reg[6:0], miso};
-
-                            state <= DONE;
-
-                        end
-                        else begin
-
-                            bit_count <= bit_count + 1'b1;
-
-                        end
-
-                    end
-
-                end
-
-                DONE: begin
-
-                    cs_reg <= 1'b1;
-                    busy_reg <= 1'b0;
-                    sclk_reg <= 1'b0;
-
-                    state <= IDLE;
-
-                end
-
-            endcase
-
-        end
-
-    end
-
-    assign uo_out[0] = mosi_reg;
-    assign uo_out[1] = sclk_reg;
-    assign uo_out[2] = cs_reg;
-    assign uo_out[3] = busy_reg;
-
-    assign uo_out[7:4] = received_data[3:0];
+    //--------------------------------------------------
+    // Unused IO
+    //--------------------------------------------------
 
     assign uio_out = 8'b0;
     assign uio_oe  = 8'b0;
 
-    wire _unused = &{ena, uio_in[7:2], 1'b0};
+    wire _unused = &{
+        ena,
+        uio_in,
+        ui_in[7:1],
+        1'b0
+    };
 
 endmodule
