@@ -42,20 +42,18 @@ begin
 
         if(bit_count == 3'd7)
         begin
-
             rx_data <= {rx_shift[6:0], mosi};
-
         end
-
         else
         begin
-
             bit_count <= bit_count + 1'b1;
-
         end
 
     end
 
 end
+
+wire _unused_slave_rxshift;
+assign _unused_slave_rxshift = rx_shift[7];
 
 endmodule
