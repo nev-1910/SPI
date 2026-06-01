@@ -1,6 +1,6 @@
 `default_nettype none
 
-module tt_um_spi_master_slave (
+module tt_um_spi_master (
 
     input  wire [7:0] ui_in,
     output wire [7:0] uo_out,
